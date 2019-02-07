@@ -18,6 +18,56 @@ HCTree::~HCTree() {
  */
 void HCTree::build(const vector<int>& freqs) {
     // TODO (checkpoint)
+    if (root != nullptr)
+	delete this;
+    else {
+	//cout << freqs[0] <<endl;
+	//create a priority_queue, push nodes into them (256).
+	std::priority_queue<HCNode*, vector<HCNode*>, HCNodePtrComp> nqueue;
+	for(unsigned int i = 0; i < freqs.size() ; i++){
+		HCNode* n = new HCNode(freqs[i] , char(i) , 0 , 0 , 0);
+		//n->count = freqs[i];
+		//n->symbol = i;
+		nqueue.push(n);
+	}
+	//EXTRA: print out contents of priority_queue with correct priority!
+	//while(!nqueue.empty()){
+	//	cout << nqueue.top()->symbol << endl;
+	//	nqueue.pop();
+	//}
+	//NOTE 2/6/19 @ 5:33pm: 
+	//implementation of building a tree bottom up is more complicated than i thought.	
+	while(nqueue.top()->count == 0)
+		nqueue.pop();
+	//vector<HCNode*> leaves;
+	//leaves.assign(256, nullptr);
+	
+	//QUESTION: what symbol do i use for the intermediate nodes?
+	while(nqueue.size() != 1){
+		HCNode* n1 = nqueue.top();
+		nqueue.pop();
+		leaves[int(n1->symbol)] = n1;
+
+		HCNode* n0 = nqueue.top();
+		nqueue.pop();
+		leaves[int(n0->symbol)] = n0;
+			
+		if(n1->symbol > n0->symbol){
+			HCNode* p = new HCNode ( (n1->count + n0->count) , n1->symbol , n0 , n1 , 0 );
+			nqueue.push(p);
+
+		}
+		else{
+			HCNode* p = new HCNode ( (n1->count + n0->count) , n0->symbol , n0 , n1 , 0 );
+			nqueue.push(p);
+		}
+
+	}
+	//root = nqueue.top();
+	cout << leaves[66]->count << endl;
+	cout << leaves[66]->symbol << endl; 
+	//this->printTree();
+    }
 }
 
 /** Write to the given ostream
@@ -27,6 +77,22 @@ void HCTree::build(const vector<int>& freqs) {
  */
 void HCTree::encode(byte symbol, ostream& out) const {
     // TODO (checkpoint)
+	//cout << "encoding" << endl;
+	string c = "";
+	string one = "1";
+	string zero = "0";
+
+	//cout << "wwww" << endl;
+	//HCNode* curr = leaves[int(symbol)];
+	//while( curr->p != nullptr){
+	//	if(curr == curr->p->c0)
+	//		c = zero+c;
+	//	else
+	//		c = one+c;
+	//	curr = curr->p;
+	//}
+	//out << c;	
+
 }
 
 /** Return the symbol coded in the next sequence of bits (represented as 
@@ -78,4 +144,15 @@ void HCTree::printTreeHelper(HCNode * node, string indent) const {
         printTreeHelper(node->c0, indent + "  ");
         printTreeHelper(node->c1, indent + "  ");
     }
+}
+
+void HCTree::printLeaves(ostream& out) const {
+	for(unsigned int j = 0; j < leaves.size() ; j++){
+		if(leaves[j] != nullptr){
+			out << leaves[j]->count << endl;
+		}
+		else
+			out << "0" << endl;
+	}
+
 }

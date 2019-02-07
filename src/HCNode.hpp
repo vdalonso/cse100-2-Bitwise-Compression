@@ -7,7 +7,7 @@ typedef unsigned char byte;
 
 using namespace std;
 
-/** A class, instances of which are nodes in an HCTree.
+/** A class, instances of which are nodes in an HCTree ie: HCNode.
  */
 class HCNode {
 public:

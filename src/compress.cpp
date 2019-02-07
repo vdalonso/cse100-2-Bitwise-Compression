@@ -22,9 +22,48 @@ void print_usage(char ** argv) {
  * For debugging purposes, uses ASCII '0' and '1' rather than bitwise I/O.
  */
 void compressAscii(const string & infile, const string & outfile) {
-    // TODO (checkpoint)
+    // TODO (checkpoint): DONE!
     cerr << "TODO: compress '" << infile << "' -> '"
         << outfile << "' here (ASCII)" << endl;
+
+    //filebuf f1;
+    //f1.open(infile , std::ios::in);
+
+
+    std::ifstream file;
+    file.open(infile , ios::binary);
+    vector<int> freq;
+    freq.assign(256, 0);
+    char c;
+    while (file.get(c)){
+	int i = int(c);
+	freq[i]++;
+    }
+    HCTree tree;
+    tree.build(freq);
+    //cout << "tree complete" << endl;
+    
+
+    //filebuf f2, f3;
+    //f2.open(outfile , std::ios::out);
+    //f3.open(infile , std::ios::in);
+    std::ofstream outf;
+    outf.open(outfile , ios::binary);
+    std::ifstream encodeF;
+    encodeF.open(infile , ios::binary);
+    //added this function to add header
+    //tree.printLeaves(outf);
+
+    for(int i = 0; i < freq.size() ; i++)
+	outf << freq[i] << endl;	
+
+    while(encodeF.get(c)){
+//	cout << "this ran" << endl;
+	tree.encode(c , outf);
+    } 
+    file.close();
+    outf.close();
+    encodeF.close();
 }
 
 /**

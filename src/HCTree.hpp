@@ -86,6 +86,8 @@ public:
      * Print the contents of a tree
      */
     void printTree() const;
+
+    void printLeaves(ostream & out) const;
 };
 
 #endif // HCTREE_HPP
