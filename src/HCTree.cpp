@@ -46,27 +46,33 @@ void HCTree::build(const vector<int>& freqs) {
 	while(nqueue.size() != 1){
 		HCNode* n1 = nqueue.top();
 		nqueue.pop();
-		leaves[int(n1->symbol)] = n1;
+		if (leaves[int(n1->symbol)] == nullptr){
+			leaves[int(n1->symbol)] = n1;
+		}
 
 		HCNode* n0 = nqueue.top();
 		nqueue.pop();
-		leaves[int(n0->symbol)] = n0;
+		if (leaves[int(n0->symbol)] == nullptr){
+			leaves[int(n0->symbol)] = n0;
+		}
 			
 		if(n1->symbol > n0->symbol){
-			HCNode* p = new HCNode ( (n1->count + n0->count) , n1->symbol , n0 , n1 , 0 );
-			nqueue.push(p);
+			HCNode* par = new HCNode ( (n1->count + n0->count) , n1->symbol , n0 , n1 , 0 );
+			n1->p = n0->p = par;
+			nqueue.push(par);
 
 		}
 		else{
-			HCNode* p = new HCNode ( (n1->count + n0->count) , n0->symbol , n0 , n1 , 0 );
-			nqueue.push(p);
+			HCNode* par = new HCNode ( (n1->count + n0->count) , n0->symbol , n0 , n1 , 0 );
+			n1->p = n0->p = par;
+			nqueue.push(par);
 		}
 
 	}
-	//root = nqueue.top();
-	cout << leaves[66]->count << endl;
-	cout << leaves[66]->symbol << endl; 
-	//this->printTree();
+	root = nqueue.top();
+	//cout << leaves[66]->count << endl;
+	//cout << leaves[66]->symbol << endl; 
+	this->printTree();
     }
 }
 
@@ -78,20 +84,32 @@ void HCTree::build(const vector<int>& freqs) {
 void HCTree::encode(byte symbol, ostream& out) const {
     // TODO (checkpoint)
 	//cout << "encoding" << endl;
-	string c = "";
-	string one = "1";
-	string zero = "0";
+	string c;
+	string one ("1");
+	string zero ("0");
 
 	//cout << "wwww" << endl;
-	//HCNode* curr = leaves[int(symbol)];
-	//while( curr->p != nullptr){
-	//	if(curr == curr->p->c0)
-	//		c = zero+c;
-	//	else
-	//		c = one+c;
-	//	curr = curr->p;
-	//}
-	//out << c;	
+	HCNode* curr = leaves[symbol];
+	//cout << curr->symbol <<endl;
+	if(curr->p == nullptr)
+		cout << "curr's parent is a nullptr." <<endl;
+	
+	while( curr->p != nullptr){
+		if(curr == curr->p->c0){
+			if(c.empty())
+				c = zero;
+			else
+				c = zero + c;	
+		}
+		else{
+			if(c.empty())
+				c = one;
+			else
+				c = one + c;
+		}
+		curr = curr->p;
+	}
+	out << c;	
 
 }
 

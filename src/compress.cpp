@@ -54,11 +54,11 @@ void compressAscii(const string & infile, const string & outfile) {
     //added this function to add header
     //tree.printLeaves(outf);
 
-    for(int i = 0; i < freq.size() ; i++)
+    for(unsigned int i = 0; i < freq.size() ; i++)
 	outf << freq[i] << endl;	
 
     while(encodeF.get(c)){
-//	cout << "this ran" << endl;
+//	cout << "encoding symbol :" << c << endl;
 	tree.encode(c , outf);
     } 
     file.close();
