@@ -43,12 +43,23 @@ void HCTree::build(const vector<int>& freqs) {
 	//leaves.assign(256, nullptr);
 	
 	//QUESTION: what symbol do i use for the intermediate nodes?
+	
+	if(nqueue.size() == 1){
+		HCNode* single = nqueue.top();
+		leaves[int(single->symbol)] = single;
+	}
+	
+	else{
 	while(nqueue.size() != 1){
+		//cout << "in the while loop \n";
+		
+		
+
 		HCNode* n1 = nqueue.top();
 		nqueue.pop();
-		if (leaves[int(n1->symbol)] == nullptr){
+		if (leaves[int(n1->symbol)] == nullptr)
 			leaves[int(n1->symbol)] = n1;
-		}
+
 
 		HCNode* n0 = nqueue.top();
 		nqueue.pop();
@@ -57,22 +68,23 @@ void HCTree::build(const vector<int>& freqs) {
 		}
 			
 		if(n1->symbol > n0->symbol){
-			HCNode* par = new HCNode ( (n1->count + n0->count) , n1->symbol , n0 , n1 , 0 );
+			HCNode* par = new HCNode ( (n1->count + n0->count) , n1->symbol , n1 , n0 , 0 );
 			n1->p = n0->p = par;
 			nqueue.push(par);
 
 		}
 		else{
-			HCNode* par = new HCNode ( (n1->count + n0->count) , n0->symbol , n0 , n1 , 0 );
+			HCNode* par = new HCNode ( (n1->count + n0->count) , n0->symbol , n1 , n0 , 0 );
 			n1->p = n0->p = par;
 			nqueue.push(par);
-		}
+		}	
 
+	}
 	}
 	root = nqueue.top();
 	//cout << leaves[66]->count << endl;
 	//cout << leaves[66]->symbol << endl; 
-	this->printTree();
+	//this->printTree();
     }
 }
 
@@ -88,12 +100,14 @@ void HCTree::encode(byte symbol, ostream& out) const {
 	string one ("1");
 	string zero ("0");
 
-	//cout << "wwww" << endl;
+	//cout << int(symbol) << endl;
+	//cout << leaves[symbol]->symbol <<endl;
 	HCNode* curr = leaves[symbol];
+	//cout << root->symbol << endl;
 	//cout << curr->symbol <<endl;
+
 	if(curr->p == nullptr)
-		cout << "curr's parent is a nullptr." <<endl;
-	
+		return;	
 	while( curr->p != nullptr){
 		if(curr == curr->p->c0){
 			if(c.empty())
@@ -119,7 +133,25 @@ void HCTree::encode(byte symbol, ostream& out) const {
  *  tree, and initialize root pointer and leaves vector.
  */
 byte HCTree::decode(istream& in) const {
-    return 0;  // TODO (checkpoint)
+    //return 0;  // TODO (checkpoint)
+	char z = '0';
+	HCNode * curr = root;
+	if(in.eof())
+		return 0;
+	while (curr->c0 != nullptr && curr->c1 != nullptr){
+		char c;
+		in.get(c);
+		cout << "curent node is: " << curr->symbol << curr->count << endl;
+		cout << c << endl;
+		//if ( c == char(-1))
+		//	return; 
+		if ( c == z)
+			curr = curr->c0;
+		else
+			curr = curr->c1;
+	}
+	//cout << "symbol getting printed is :" << curr->symbol << endl;
+	return curr->symbol;
 }
 
 /** Write to the given BitOutputStream

@@ -31,39 +31,42 @@ void compressAscii(const string & infile, const string & outfile) {
 
 
     std::ifstream file;
-    file.open(infile , ios::binary);
+    file.open(infile , ios::in | ios::binary);
     vector<int> freq;
     freq.assign(256, 0);
+
     char c;
+    //bool done = 0;
     while (file.get(c)){
-	int i = int(c);
-	freq[i]++;
+	if(c < 0){
+		continue;
+	}
+	
+	freq[(unsigned char) c]++;
     }
     HCTree tree;
     tree.build(freq);
+    tree.printTree();
     //cout << "tree complete" << endl;
-    
+    //file.close();
 
-    //filebuf f2, f3;
-    //f2.open(outfile , std::ios::out);
-    //f3.open(infile , std::ios::in);
+    file.clear();
+    file.seekg(0);
     std::ofstream outf;
     outf.open(outfile , ios::binary);
-    std::ifstream encodeF;
-    encodeF.open(infile , ios::binary);
-    //added this function to add header
     //tree.printLeaves(outf);
 
     for(unsigned int i = 0; i < freq.size() ; i++)
 	outf << freq[i] << endl;	
 
-    while(encodeF.get(c)){
-//	cout << "encoding symbol :" << c << endl;
-	tree.encode(c , outf);
+    char b;
+    while(file.get(b)){
+	if(b >= 0)
+		tree.encode(b , outf);
     } 
     file.close();
     outf.close();
-    encodeF.close();
+   // encodeF.close();
 }
 
 /**
