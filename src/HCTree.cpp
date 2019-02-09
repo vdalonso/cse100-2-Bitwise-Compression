@@ -134,6 +134,7 @@ void HCTree::encode(byte symbol, ostream& out) const {
  */
 byte HCTree::decode(istream& in) const {
     //return 0;  // TODO (checkpoint)
+    //still sending a value when we reach the EOF, how do we prevent that??
 	char z = '0';
 	HCNode * curr = root;
 	if(in.eof())
@@ -141,8 +142,8 @@ byte HCTree::decode(istream& in) const {
 	while (curr->c0 != nullptr && curr->c1 != nullptr){
 		char c;
 		in.get(c);
-		cout << "curent node is: " << curr->symbol << curr->count << endl;
-		cout << c << endl;
+		//cout << "curent node is: " << curr->symbol << curr->count << endl;
+		//cout << c << endl;
 		//if ( c == char(-1))
 		//	return; 
 		if ( c == z)

@@ -50,7 +50,11 @@ void uncompressAscii(const string & infile, const string & outfile) {
     //cout << file.get() <<endl;
     //file.unget(); 
     while(!file.eof()){
-	ofile << tree.decode(file);
+	byte x = tree.decode(file);
+	if (file.eof())
+		break;
+	else
+		ofile << x ;
     }
 
 }
