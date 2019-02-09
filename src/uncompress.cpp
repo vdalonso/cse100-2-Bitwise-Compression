@@ -27,28 +27,36 @@ void uncompressAscii(const string & infile, const string & outfile) {
     cerr << "TODO: uncompress '" << infile << "' -> '"
         << outfile << "' here (ASCII)" << endl;
 
-    
+     
     std::ifstream file(infile);
     vector<int> freq;
     freq.assign(256 , 0);
     string c;
-    
+    bool empty = 1;
     for(unsigned int i = 0 ; i < 256 ; i++) {
 	getline(file , c);
 	int count = stoi(c, nullptr , 10);
 	//cout << count << endl;
 	freq[i] = count;
     }
-    //cout << "end of vector" <<endl;
-    HCTree tree;
-    tree.build(freq);
-    tree.printTree(); 
-
     std::ofstream ofile;
     ofile.open(outfile , ios::binary);
-    //file.seekg(257);
-    //cout << file.get() <<endl;
-    //file.unget(); 
+
+    for(unsigned int j = 0; j < freq.size() ; j++){
+	if(freq[j] != 0)
+		empty = 0;
+    }
+    if(empty)
+	return;
+
+
+    HCTree tree;
+    tree.build(freq);
+    //tree.printTree(); 
+
+    //std::ofstream ofile;
+    //ofile.open(outfile , ios::binary);
+
     while(!file.eof()){
 	byte x = tree.decode(file);
 	if (file.eof())

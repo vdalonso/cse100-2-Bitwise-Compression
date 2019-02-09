@@ -26,17 +26,13 @@ void compressAscii(const string & infile, const string & outfile) {
     cerr << "TODO: compress '" << infile << "' -> '"
         << outfile << "' here (ASCII)" << endl;
 
-    //filebuf f1;
-    //f1.open(infile , std::ios::in);
-
-
     std::ifstream file;
     file.open(infile , ios::in | ios::binary);
     vector<int> freq;
     freq.assign(256, 0);
 
     char c;
-    //bool done = 0;
+    bool empty = 1;
     while (file.get(c)){
 	if(c < 0){
 		continue;
@@ -44,17 +40,29 @@ void compressAscii(const string & infile, const string & outfile) {
 	
 	freq[(unsigned char) c]++;
     }
+
+    std::ofstream outf;
+    outf.open(outfile , ios::binary);
+
+    //check if infile is empty. if so printout frequencies and exit.
+    for(unsigned int j = 0 ; j < freq.size() ; j++){
+	if( freq[j] != 0)
+		empty = 0;
+    }
+    if(empty){
+	for(unsigned int i = 0; i < freq.size() ; i++)
+		outf << freq[i] << endl;	
+	return;
+    }
+	
     HCTree tree;
     tree.build(freq);
-    tree.printTree();
-    //cout << "tree complete" << endl;
-    //file.close();
+    //tree.printTree();
 
     file.clear();
     file.seekg(0);
-    std::ofstream outf;
-    outf.open(outfile , ios::binary);
-    //tree.printLeaves(outf);
+    //std::ofstream outf;
+    //outf.open(outfile , ios::binary);
 
     for(unsigned int i = 0; i < freq.size() ; i++)
 	outf << freq[i] << endl;	
