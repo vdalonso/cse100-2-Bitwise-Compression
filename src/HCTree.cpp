@@ -8,6 +8,8 @@
  */
 HCTree::~HCTree() {
     // TODO (checkpoint)
+    for(unsigned int i = 0 ; i < leaves.size() ; i++)
+	delete leaves[i];
 }
 
 /** Use the Huffman algorithm to build a Huffman coding tree.
@@ -17,7 +19,7 @@ HCTree::~HCTree() {
  *  and leaves[i] points to the leaf node containing byte i.
  */
 void HCTree::build(const vector<int>& freqs) {
-    // TODO (checkpoint)
+    // TODO (checkpoint) done.
     if (root != nullptr)
 	delete this;
     else {
@@ -94,7 +96,7 @@ void HCTree::build(const vector<int>& freqs) {
  *  tree, and initialize root pointer and leaves vector.
  */
 void HCTree::encode(byte symbol, ostream& out) const {
-    // TODO (checkpoint)
+    // TODO (checkpoint) done.
 	//cout << "encoding" << endl;
 	string c;
 	string one ("1");
@@ -133,7 +135,7 @@ void HCTree::encode(byte symbol, ostream& out) const {
  *  tree, and initialize root pointer and leaves vector.
  */
 byte HCTree::decode(istream& in) const {
-    //return 0;  // TODO (checkpoint)
+    //return 0;  // TODO (checkpoint) done.
     //still sending a value when we reach the EOF, how do we prevent that??
 	char z = '0';
 	HCNode * curr = root;
