@@ -139,6 +139,8 @@ byte HCTree::decode(istream& in) const {
     //still sending a value when we reach the EOF, how do we prevent that??
 	char z = '0';
 	HCNode * curr = root;
+	
+
 	if(in.eof())
 		return 0;
 	while (curr->c0 != nullptr && curr->c1 != nullptr){
@@ -164,6 +166,36 @@ byte HCTree::decode(istream& in) const {
  */
 void HCTree::encode(byte symbol, BitOutputStream& out) const {
     // TODO (final)
+	string c;
+	string one = ("1");
+	string zero = ("0");
+	HCNode * curr = leaves[symbol];
+
+	if(curr->p == nullptr)
+		return;	
+	while( curr->p != nullptr){
+		if(curr == curr->p->c0){
+			if(c.empty())
+				c = zero;
+			else
+				c = zero + c;	
+		}
+		else{
+			if(c.empty())
+				c = one;
+			else
+				c = one + c;
+		}
+		curr = curr->p;
+	}
+	//reads the string that represents the encoded symbol and writes them as bits.
+	for(unsigned int i = 0; i < c.length() ; i++){
+		if(c[i] == (char)0)
+			out.writeBit(0);
+		else
+			out.writeBit(1);	
+	}
+
 }
 
 /** Return symbol coded in the next sequence of bits from the stream.

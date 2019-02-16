@@ -32,7 +32,10 @@ void uncompressAscii(const string & infile, const string & outfile) {
     vector<int> freq;
     freq.assign(256 , 0);
     string c;
-    bool empty = 1;
+    //bool empty = 1;
+    int count = 0;
+    int largest = 0;
+
     for(unsigned int i = 0 ; i < 256 ; i++) {
 	getline(file , c);
 	int count = stoi(c, nullptr , 10);
@@ -43,19 +46,28 @@ void uncompressAscii(const string & infile, const string & outfile) {
     ofile.open(outfile , ios::binary);
 
     for(unsigned int j = 0; j < freq.size() ; j++){
-	if(freq[j] != 0)
-		empty = 0;
+	if(freq[j] != 0){
+		count++;;
+		if(freq[j] > freq[largest])
+			largest = j;
+	}
     }
-    if(empty)
-	return;
+    if(count <= 1){
+	if(count == 0)
+		return;
+	else if (count == 1){
+		//cout << "there si only one symbol in file \n";
+		for(unsigned int i = 0 ; i < freq[largest] ; i++)
+			ofile << (byte)largest;
+		return;
+	}
 
+    }
 
     HCTree tree;
     tree.build(freq);
-    //tree.printTree(); 
 
-    //std::ofstream ofile;
-    //ofile.open(outfile , ios::binary);
+
 
     while(!file.eof()){
 	byte x = tree.decode(file);

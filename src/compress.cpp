@@ -86,6 +86,31 @@ void compressBitwise(const string & infile, const string & outfile) {
     // TODO (final)
     cerr << "TODO: compress '" << infile << "' -> '"
         << outfile << "' here (bitwise)" << endl;
+
+    std::ifstream file;
+    file.open(infile , ios::in | ios::binary);
+    vector<int> freq;
+    freq.assign(256, 0);
+
+    char c;
+    bool empty = 1;
+    while (file.get(c)){
+	if(c < 0){
+		continue;
+	}
+	
+	freq[(unsigned char) c]++;
+    }
+    HCTree tree;
+    tree.build(freq);
+    tree.printTree();
+
+    std::ofstream outf;
+    outf.open(outfile , ios::binary);
+
+    //BitOutputStream out = new BitOutputStream(outf);
+
+    
 }
 
 int main(int argc, char ** argv) {
