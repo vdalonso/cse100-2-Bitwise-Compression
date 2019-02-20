@@ -153,9 +153,9 @@ void compressBitwise(const string & infile, const string & outfile) {
     //NOTE: this is now my alternative:
     //
 
-    if(count % 8 != 0){
+    //if(count % 8 != 0){
 	out.flush();
-    }
+    //}
 
     //cout << count << endl; 
     file.close();
