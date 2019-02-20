@@ -91,6 +91,10 @@ void compressBitwise(const string & infile, const string & outfile) {
 
     char c;
     bool empty = 1;
+
+    //bool extraflush = 1;
+    //int total = 0;
+
     while (file.get(c)){
 	//if(c < 0){
 	//	continue;
@@ -145,7 +149,13 @@ void compressBitwise(const string & infile, const string & outfile) {
     //NOTE: this final flush is dangerous, since if there is a binary sequence divisible by 8
     //it'll flush out a byte of all zeros.
     //FIND AN ALRTERNATIVE.
-    out.flush();
+    //
+    //NOTE: this is now my alternative:
+    //
+
+    if(count % 8 != 0){
+	out.flush();
+    }
 
     //cout << count << endl; 
     file.close();
