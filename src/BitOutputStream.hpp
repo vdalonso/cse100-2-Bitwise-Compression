@@ -11,6 +11,7 @@ private:
     int nbits;
     unsigned char buf;
     int nbytes = 0;
+    bool first = 0;
 
 public:
     BitOutputStream(ostream & o);

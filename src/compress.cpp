@@ -57,7 +57,7 @@ void compressAscii(const string & infile, const string & outfile) {
 	
     HCTree tree;
     tree.build(freq);
-    tree.printTree();
+    //tree.printTree();
 
     file.clear();
     file.seekg(0);
@@ -92,11 +92,11 @@ void compressBitwise(const string & infile, const string & outfile) {
     char c;
     bool empty = 1;
     while (file.get(c)){
-	if(c < 0){
-		continue;
-	}
+	//if(c < 0){
+	//	continue;
+	//}
 	
-	freq[(unsigned char) c]++;
+	freq[(byte) c]++;
     }
 
     //build the BitOutputStream object to write the header and later on write bits.
@@ -114,7 +114,7 @@ void compressBitwise(const string & infile, const string & outfile) {
 		bool bit = (freq[i] >> j) & 1;
 		out.writeBit(bit);
 	}
-
+//	cout << "-------------------------------------- \n";
     }
     //NOTE: this flush is here to flush the last 8 bits inside the buf
     //since it wont happen until writeBit is called.
@@ -128,8 +128,9 @@ void compressBitwise(const string & infile, const string & outfile) {
     //Construction of HC Tree.
     HCTree tree;
     tree.build(freq);
-    tree.printTree();
+    //tree.printTree();
 
+    //sets the file to the beginning once more to reread each symbol and encode it.
     file.clear();
     file.seekg(0);
     
@@ -137,11 +138,16 @@ void compressBitwise(const string & infile, const string & outfile) {
     char b;
     int count = 0;
     while(file.get(b)){
-	if(b >= 0)
+	//if(b >= 0)
 		tree.encode(b , out);
 	count++;
     }
-    cout << count << endl; 
+    //NOTE: this final flush is dangerous, since if there is a binary sequence divisible by 8
+    //it'll flush out a byte of all zeros.
+    //FIND AN ALRTERNATIVE.
+    out.flush();
+
+    //cout << count << endl; 
     file.close();
     outf.close();
 

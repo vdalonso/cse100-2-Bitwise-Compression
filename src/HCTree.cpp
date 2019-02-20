@@ -189,8 +189,8 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
 		}
 		curr = curr->p;
 	}
-	//cout << c << endl;
-	//reads the string that represents the encoded symbol and writes them as bits.
+	//cout << (int)symbol << endl;
+	//reads the string that represents the encoded symbol (in binary) and writes them as bits.
 	for(unsigned int i = 0; i < c.length() ; i++){
 	//cout << "this is the bit in 'c' : " << c[i] << endl;
 		if(c[i] == '0'){
@@ -210,7 +210,21 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
  *  tree, and initialize root pointer and leaves vector.
  */
 byte HCTree::decode(BitInputStream& in) const {
-    return 0;  // TODO (final)
+    //return 0;  // TODO (final)
+ 	HCNode * curr = root;
+	
+	while (curr->c0 != nullptr && curr->c1 != nullptr){
+		bool c = in.readBit();
+
+		if ( c == 0)
+			curr = curr->c0;
+		else
+			curr = curr->c1;
+	}
+	//cout << "symbol getting printed is :" << curr->symbol << endl;
+	return curr->symbol;
+   
+    
 }
 
 /**

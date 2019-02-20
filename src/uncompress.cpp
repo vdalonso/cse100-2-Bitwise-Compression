@@ -45,6 +45,7 @@ void uncompressAscii(const string & infile, const string & outfile) {
     std::ofstream ofile;
     ofile.open(outfile , ios::binary);
 
+    //checking how many unique symbols appear and keeping track of the largest count.
     for(unsigned int j = 0; j < freq.size() ; j++){
 	if(freq[j] != 0){
 		count++;;
@@ -66,7 +67,7 @@ void uncompressAscii(const string & infile, const string & outfile) {
 
     HCTree tree;
     tree.build(freq);
-
+    //tree.printTree();
 
 
     while(!file.eof()){
@@ -96,6 +97,7 @@ void uncompressBitwise(const string & infile, const string & outfile) {
     //bool empty = 1;
     int count = 0;
     int largest = 0;
+    int total = 0;
 
     BitInputStream in(file);
     
@@ -103,10 +105,6 @@ void uncompressBitwise(const string & infile, const string & outfile) {
     for(int i = 0 ; i < 256 ; i++){
 	unsigned int symbol = 0;
 	for(int j = 31 ; j >= 0 ; j--){
-		//unsigned int bit = 0;
-		//bit = in.readBit();
-		//if (i == 65)
-		//	cout << bit;
 		freq[i] = freq[i] | (in.readBit() << j);
 	}
 	//cout << "--------------------------------------------------------------------\n";
@@ -114,12 +112,59 @@ void uncompressBitwise(const string & infile, const string & outfile) {
     }
 //    for(int j = 0; j < freq.size() ;  j++)
 //	cout << "symbol number " << j << " apears : " << freq[j] << "  times. \n"; 
+
+
+    std::ofstream ofile;
+    ofile.open(outfile , ios::binary);
+
+    //checking how many unique symbols appear and keeping track of the largest count.
+    for(unsigned int j = 0; j < freq.size() ; j++){
+	if(freq[j] != 0){
+		count++;;
+		if(freq[j] > freq[largest])
+			largest = j;
+	}
+	total = total + freq[j];
+    }
+    
+    //checking if the file was empty to begin with or if the file only had one symbol
+    //in this case do not build a tree.
+    if(count <= 1){
+	if(count == 0)
+		return;
+	else if (count == 1){
+		//cout << "there si only one symbol in file \n";
+		for( int i = 0 ; i < freq[largest] ; i++)
+			ofile << (byte)largest;
+		return;
+	}
+
+    }
+
+    //building the tree of frequencies.
     HCTree tree;
     tree.build(freq);
-    tree.printTree();
+    //tree.printTree();
+
+    //For as many symbols found in the file, this for loop will run 
+    //and print out that many symbols to ofile.
+    for(int i = 0 ; i < total ; i++)
+	ofile << tree.decode(in);
+
+
+    
+//  while(!file.eof()){
+//	byte x = tree.decode(in);
+//	if (file.eof())
+//		break;
+//	else
+//		ofile << x ;
+//    }
+    
+    //ofile << tree.decode(in);
 
     file.close();
-
+    ofile.close();
 
 }
 
