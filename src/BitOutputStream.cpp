@@ -9,25 +9,24 @@ void BitOutputStream::writeBit(bool bit) {
     if(nbits == 8){
 	flush();
     }
+    unsigned char b = bit;
     //NOTE: must implement the case where there is no more bits to read
     //but there remains some more bits to be flushed (1-7 bits).
     //in this case pad the byte with 0 in the remaining right hand side of the written bits.
     
-    //writing from leftmost bit to rightmost.
-    if (bit){
-	buf = buf << 1;
-	buf = buf | 0x01;
-    }
-    else {
-	buf = buf << 1;
-	buf = buf | 0x00;
-    }
+    buf = buf | (b << (7-nbits));
+
+
+
     nbits++;
 
 }
 
 void BitOutputStream::flush() {
     // TODO (final)
+    nbytes++;
+    //cout << "writing: " << int(buf) << endl;
+    //cout << "bytes written : " << nbytes << endl;
     out.put(buf);			//write the buffer to the ostream.
     out.flush();			//flush the ostream.
     buf = 0;				//empty the buffer.

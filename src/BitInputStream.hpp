@@ -10,6 +10,9 @@ private:
     istream & in;
     int nbits;
     unsigned char buf;
+    unsigned int nbytes;
+
+    void fill();
 
 public:
     BitInputStream(istream & i);

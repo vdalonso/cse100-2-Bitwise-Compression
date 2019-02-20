@@ -36,7 +36,7 @@ void uncompressAscii(const string & infile, const string & outfile) {
     int count = 0;
     int largest = 0;
 
-    for(unsigned int i = 0 ; i < 256 ; i++) {
+    for( int i = 0 ; i < 256 ; i++) {
 	getline(file , c);
 	int count = stoi(c, nullptr , 10);
 	//cout << count << endl;
@@ -57,7 +57,7 @@ void uncompressAscii(const string & infile, const string & outfile) {
 		return;
 	else if (count == 1){
 		//cout << "there si only one symbol in file \n";
-		for(unsigned int i = 0 ; i < freq[largest] ; i++)
+		for( int i = 0 ; i < freq[largest] ; i++)
 			ofile << (byte)largest;
 		return;
 	}
@@ -88,6 +88,39 @@ void uncompressBitwise(const string & infile, const string & outfile) {
     // TODO (final)
     cerr << "TODO: uncompress '" << infile << "' -> '"
         << outfile << "' here (bitwise)" << endl;
+
+    std::ifstream file(infile);
+    vector<int> freq;
+    freq.assign(256 , 0);
+    string c;
+    //bool empty = 1;
+    int count = 0;
+    int largest = 0;
+
+    BitInputStream in(file);
+    
+    //inserting the integer values into frequencies vector to build tree.
+    for(int i = 0 ; i < 256 ; i++){
+	unsigned int symbol = 0;
+	for(int j = 31 ; j >= 0 ; j--){
+		//unsigned int bit = 0;
+		//bit = in.readBit();
+		//if (i == 65)
+		//	cout << bit;
+		freq[i] = freq[i] | (in.readBit() << j);
+	}
+	//cout << "--------------------------------------------------------------------\n";
+	//cout << "count: " << symbol << endl;
+    }
+//    for(int j = 0; j < freq.size() ;  j++)
+//	cout << "symbol number " << j << " apears : " << freq[j] << "  times. \n"; 
+    HCTree tree;
+    tree.build(freq);
+    tree.printTree();
+
+    file.close();
+
+
 }
 
 int main(int argc, char ** argv) {

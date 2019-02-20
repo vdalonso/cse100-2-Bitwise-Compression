@@ -104,6 +104,7 @@ void HCTree::encode(byte symbol, ostream& out) const {
 
 	//cout << int(symbol) << endl;
 	//cout << leaves[symbol]->symbol <<endl;
+	//cout << "--------------------------------------\n";
 	HCNode* curr = leaves[symbol];
 	//cout << root->symbol << endl;
 	//cout << curr->symbol <<endl;
@@ -188,14 +189,20 @@ void HCTree::encode(byte symbol, BitOutputStream& out) const {
 		}
 		curr = curr->p;
 	}
+	//cout << c << endl;
 	//reads the string that represents the encoded symbol and writes them as bits.
 	for(unsigned int i = 0; i < c.length() ; i++){
-		if(c[i] == (char)0)
+	//cout << "this is the bit in 'c' : " << c[i] << endl;
+		if(c[i] == '0'){
 			out.writeBit(0);
-		else
-			out.writeBit(1);	
+			//cout << 0;
+		}
+		else{
+			out.writeBit(1);
+			//cout << 1;
+		}	
 	}
-
+	//cout << endl;
 }
 
 /** Return symbol coded in the next sequence of bits from the stream.

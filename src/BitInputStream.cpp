@@ -10,10 +10,9 @@ BitInputStream::BitInputStream(istream & i) : in(i), nbits(8), buf(0) {}
 bool BitInputStream::readBit() {
     //return false;  // TODO (final)
     if(nbits == 8 ){
-	buf = in.get();
-	nbits = 0;
+	fill();
     }
-    unsigned int nextBit = buf >> (7-nbits);
+    unsigned char nextBit = buf >> (7-nbits);
     nextBit = nextBit << 7;
     nbits++;
     
@@ -22,4 +21,12 @@ bool BitInputStream::readBit() {
     else
 	return 1;
 	
+}
+
+void BitInputStream::fill() {
+	buf = in.get();
+	nbytes++;
+	//cout << "character read: " << (int)buf << endl;
+	//cout << "bytes read: " << nbytes << endl;
+	nbits = 0;
 }

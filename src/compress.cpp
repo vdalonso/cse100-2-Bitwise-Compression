@@ -27,18 +27,18 @@ void compressAscii(const string & infile, const string & outfile) {
         << outfile << "' here (ASCII)" << endl;
 
     std::ifstream file;
-    file.open(infile , ios::in | ios::binary);
+    file.open(infile , ios::binary);
     vector<int> freq;
     freq.assign(256, 0);
 
     char c;
     bool empty = 1;
     while (file.get(c)){
-	if(c < 0){
-		continue;
-	}
-	
-	freq[(unsigned char) c]++;
+//	if(c < 0){
+//		continue;
+//	}
+//	cout << (byte)c << endl;	
+	freq[(byte)c]++;
     }
 
     std::ofstream outf;
@@ -57,24 +57,21 @@ void compressAscii(const string & infile, const string & outfile) {
 	
     HCTree tree;
     tree.build(freq);
-    //tree.printTree();
+    tree.printTree();
 
     file.clear();
     file.seekg(0);
-    //std::ofstream outf;
-    //outf.open(outfile , ios::binary);
-
+    //Write the header out
     for(unsigned int i = 0; i < freq.size() ; i++)
 	outf << freq[i] << endl;	
 
     char b;
     while(file.get(b)){
-	if(b >= 0)
-		tree.encode(b , outf);
+//	if(b >= 0)
+		tree.encode((byte)b , outf);
     } 
     file.close();
     outf.close();
-   // encodeF.close();
 }
 
 /**
@@ -101,14 +98,52 @@ void compressBitwise(const string & infile, const string & outfile) {
 	
 	freq[(unsigned char) c]++;
     }
+
+    //build the BitOutputStream object to write the header and later on write bits.
+    std::ofstream outf;
+    outf.open(outfile , ios::binary);
+    BitOutputStream out(outf);
+
+    //check if infile is empty. if so simply print the header and exit.
+    //for loop runs 256 times. inner for loop runs 16 times per each outer iteration.
+    //this whole alg. will write the header bit by bit using out.writebit();
+    for(unsigned int i = 0 ; i < freq.size() ; i++){
+	if( freq[i] != 0)
+		empty = 0;
+	for(int j = 31 ; j >= 0 ; j--){
+		bool bit = (freq[i] >> j) & 1;
+		out.writeBit(bit);
+	}
+
+    }
+    //NOTE: this flush is here to flush the last 8 bits inside the buf
+    //since it wont happen until writeBit is called.
+    out.flush();
+
+    //if this file is empty, don't bother building a tree.
+    if(empty){
+	return;
+    }
+
+    //Construction of HC Tree.
     HCTree tree;
     tree.build(freq);
     tree.printTree();
 
-    std::ofstream outf;
-    outf.open(outfile , ios::binary);
-
-    //BitOutputStream out = new BitOutputStream(outf);
+    file.clear();
+    file.seekg(0);
+    
+    //start reading in bytes from the file and do bitwise encoding.
+    char b;
+    int count = 0;
+    while(file.get(b)){
+	if(b >= 0)
+		tree.encode(b , out);
+	count++;
+    }
+    cout << count << endl; 
+    file.close();
+    outf.close();
 
     
 }
